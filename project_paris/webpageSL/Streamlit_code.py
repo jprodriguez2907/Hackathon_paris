@@ -287,23 +287,44 @@ def exchange_points(total_correct_answers):
     if total_correct_answers is None:
         total_correct_answers = 0
     else:
-        total_correct_answers = total_correct_answers*107
+        total_correct_answers = total_correct_answers * 107
 
     st.write(f"Total cryptonuggets: {total_correct_answers}")
 
     st.subheader("Send cryptonuggets to another user")
-    recipient_name = st.text_input("Recipient Name:")
-    recipient_id = st.text_input("Recipient ID:")
+    sender_private_key = st.text_input("Sender's Private Key:")
+    recipient_public_key = st.text_input("Recipient's Public Key:")
     points_to_send = st.number_input("cryptonuggets to Send:", value=0, min_value=0, step=1)
 
     if st.button("Send"):
-        if points_to_send <= total_correct_answers:
+        if sender_private_key and recipient_public_key and points_to_send <= total_correct_answers:
+            response = send_xrp(sender_private_key, points_to_send, recipient_public_key)
+            st.write(response)
             total_correct_answers -= points_to_send
-            st.write(f"Sent {points_to_send} points to {recipient_name} (ID: {recipient_id})")
+        elif not sender_private_key or not recipient_public_key:
+            st.write("Please enter both sender's private key and recipient's public key.")
         else:
             st.write("Not enough points to send.")
 
     return total_correct_answers
+
+def send_xrp(seed, amount, destination):
+    import xrpl
+
+    testnet_url = "https://s.altnet.rippletest.net:51234/"
+
+    sending_wallet = xrpl.wallet.Wallet.from_seed(seed)
+    client = xrpl.clients.JsonRpcClient(testnet_url)
+    payment = xrpl.models.transactions.Payment(
+        account=sending_wallet.address,
+        amount=xrpl.utils.xrp_to_drops(int(amount)),
+        destination=destination,
+    )
+    try:
+        response = xrpl.transaction.submit_and_wait(payment, client, sending_wallet)
+    except xrpl.transaction.XRPLReliableSubmissionException as e:
+        response = f"Submit failed: {e}"
+    return response
 
 if __name__ == "__main__":
     main()

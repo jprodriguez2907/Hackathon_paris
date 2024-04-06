@@ -21,6 +21,7 @@ statsmodels = "^0.14.1"
 seaborn = "^0.13.2"
 pmdarima = "^2.0.4"
 streamlit = "^1.32.2"
+xrpl-py = "^2.5.0"
 
 
 [build-system]
