@@ -28,6 +28,7 @@ def main():
     )
 
     pages = [
+        "Previous Knowledge",
         "Quiz 1",
         "Quiz 2",
         "Quiz 3",
@@ -48,7 +49,33 @@ def main():
     if "selected_page" in st.session_state:
         selected_page = st.session_state.selected_page
 
-        if selected_page == "Quiz 1":
+        if selected_page == "Previous Knowledge":
+            st.markdown(
+                """
+                # Blockchain and Cryptocurrency Quiz Introduction
+
+                Welcome to the Blockchain and Cryptocurrency Quiz! This quiz will challenge your understanding of key concepts related to blockchain technology and cryptocurrencies. Before you dive in, let's explore some fundamental concepts that will help you navigate the quiz effectively:
+
+                ## Understanding Blockchain Technology:
+                Blockchain technology is the foundation of cryptocurrencies and decentralized systems. At its core, a blockchain is a distributed ledger that records transactions in a secure and immutable manner. Unlike traditional centralized databases, which rely on a single authority to validate and store data, blockchains operate on a decentralized network of computers (nodes). Each transaction is encrypted and linked to the previous one, forming a chain of blocks. This decentralized architecture enhances transparency, security, and trust in the system.
+
+                ## Exploring Cryptocurrencies:
+                Cryptocurrencies are digital or virtual currencies that leverage cryptography for secure transactions and operate independently of central banks or governments. Bitcoin, introduced in 2009 by an anonymous person or group known as Satoshi Nakamoto, was the first cryptocurrency and remains the most well-known and widely used. Since then, thousands of other cryptocurrencies, often referred to as altcoins, have emerged, each with its unique features and use cases. Examples include Ethereum, Ripple, Litecoin, and many others.
+
+                ## Unraveling Smart Contracts and Decentralized Applications (dApps):
+                Smart contracts are self-executing contracts with the terms of the agreement directly written into code. They automatically execute and enforce the terms of a contract when predefined conditions are met, eliminating the need for intermediaries and enhancing efficiency and transparency. Decentralized applications (dApps) are applications that run on decentralized networks, such as blockchain, rather than a single central server. They offer various benefits, including censorship resistance, enhanced security, and greater user control over data and transactions.
+
+                ## Diving into Consensus Mechanisms:
+                Consensus mechanisms are protocols or algorithms used to achieve agreement among nodes in a distributed network on the validity of transactions or data. Proof of Work (PoW) and Proof of Stake (PoS) are two widely used consensus mechanisms in blockchain networks. PoW requires participants (miners) to solve complex mathematical puzzles to validate transactions and create new blocks, while PoS relies on participants (validators) holding a certain amount of cryptocurrency as collateral to validate transactions and secure the network. These consensus mechanisms play a crucial role in maintaining the integrity and security of blockchain networks.
+
+                ## Additional Concepts to Explore:
+                In addition to the core concepts mentioned above, the quiz will also cover topics such as tokens (digital assets or utilities on a blockchain), decentralized autonomous organizations (DAOs), private keys (cryptographic keys that provide access to cryptocurrencies), Merkle trees (data structures used to efficiently verify data in blockchain networks), and more.
+
+                Now that you have a solid understanding of these fundamental concepts, you're ready to test your knowledge with the Blockchain and Cryptocurrency Quiz!
+                """
+            )
+
+        elif selected_page == "Quiz 1":
             st.title("Quiz 1")
             total_correct_answers = run_quiz_1(total_correct_answers)
 
