@@ -43,6 +43,18 @@ Additionally, the application features an exchange page where users can simulate
    ```bash
    git clone https://github.com/your_username/your_repository.git
 
+## Running the Streamlit Application
+
+To run the Streamlit application locally, follow these steps:
+
+1. **Navigate to the Directory**: Open your terminal or command prompt and navigate to the directory where your Streamlit Python script (`Streamlit_code.py`) is located.
+   
+   ```bash
+   cd \...\...\Hackathon_paris\project_paris\webpageSL
+2. **Run the Streamlit Command**: Once you're in the correct directory, execute the following command:
+
+   ```bash
+   streamlit run Streamlit_code.py
 ## Creators
 
 The Blocksmiths

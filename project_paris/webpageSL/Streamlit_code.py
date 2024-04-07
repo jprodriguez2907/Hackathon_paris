@@ -37,7 +37,9 @@ def main():
 
     cols = st.columns(len(pages))
 
-    total_correct_answers = st.session_state.get('total_correct_answers', 0)  # Obtener el contador guardado en la sesión
+    total_correct_answers = st.session_state.get('total_correct_answers', 0)
+    total_cryptonuggets = st.session_state.get('total_cryptonuggets', 0)
+    multiplied_flag = st.session_state.get('multiplied_flag', False)
 
     for col, page in zip(cols, pages):
         if col.button(page):
@@ -77,23 +79,33 @@ def main():
 
         elif selected_page == "Quiz 1":
             st.title("Quiz 1")
-            total_correct_answers = run_quiz_1(total_correct_answers)
+            total_correct_answers += run_quiz_1()
 
         elif selected_page == "Quiz 2":
             st.title("Quiz 2")
-            total_correct_answers = run_quiz_2(total_correct_answers)
+            total_correct_answers += run_quiz_2()
 
         elif selected_page == "Quiz 3":
             st.title("Quiz 3")
-            total_correct_answers = run_quiz_3(total_correct_answers)
+            total_correct_answers += run_quiz_3()
 
         elif selected_page == "Exchange":
             st.title("Exchange")
-            total_correct_answers = exchange_points(total_correct_answers)
+            if st.button("Redeem Cryptonuggets"):
+                total_cryptonuggets = total_correct_answers * 107
+                st.write(f"Total cryptonuggets: {total_cryptonuggets}")
+            st.subheader("Send cryptonuggets to another user")
+            sender_private_key = "sEdViWcfsMho1sJF5RyoqAsB5aJq5zA"
+            recipient_public_key = st.text_input("Recipient's Public Key:")
+            points_to_send = st.number_input("cryptonuggets to Send:", value=0, min_value=0, step=1)
 
-    st.session_state['total_correct_answers'] = total_correct_answers  # Guardar el contador en la sesión
+            if st.button("Send"):
+                exchange_points(sender_private_key, total_cryptonuggets, recipient_public_key, points_to_send)
 
-def run_quiz_1(total_correct_answers):
+    st.session_state['total_correct_answers'] = total_correct_answers
+    st.session_state['total_cryptonuggets'] = total_cryptonuggets
+
+def run_quiz_1():
     questions = [
         {
             "question": "What is a blockchain?",
@@ -151,12 +163,10 @@ def run_quiz_1(total_correct_answers):
                 correct_answers += 1
 
         st.write(f"You got {correct_answers} out of {len(questions)} questions correct.")
-        if total_correct_answers is None:
-            total_correct_answers = 0
+        return correct_answers
 
-        return total_correct_answers + correct_answers
 
-def run_quiz_2(total_correct_answers):
+def run_quiz_2():
     questions = [
         {
             "question": "What is Ethereum?",
@@ -196,7 +206,7 @@ def run_quiz_2(total_correct_answers):
                         "B) A type of consensus mechanism",
                         "C) A type of cryptocurrency",
                         "D) A type of encryption algorithm"],
-            "correct_answer": "C"
+            "correct_answer": "A"
         }
     ]
 
@@ -214,12 +224,9 @@ def run_quiz_2(total_correct_answers):
                 correct_answers += 1
 
         st.write(f"You got {correct_answers} out of {len(questions)} questions correct.")
-        if total_correct_answers is None:
-            total_correct_answers = 0
+        return correct_answers
 
-        return total_correct_answers + correct_answers
-
-def run_quiz_3(total_correct_answers):
+def run_quiz_3():
     questions = [
         {
             "question": "What is a Byzantine Fault?",
@@ -278,35 +285,19 @@ def run_quiz_3(total_correct_answers):
                 correct_answers += 1
 
         st.write(f"You got {correct_answers} out of {len(questions)} questions correct.")
-        if total_correct_answers is None:
-            total_correct_answers = 0
+        return correct_answers
 
-        return total_correct_answers + correct_answers
-
-def exchange_points(total_correct_answers):
-    if total_correct_answers is None:
-        total_correct_answers = 0
+def exchange_points(sender_private_key,total_cryptonuggets,recipient_public_key,points_to_send):
+    if sender_private_key and recipient_public_key:
+        send_xrp(sender_private_key, points_to_send, recipient_public_key)
+        st.write("points redeemed successfully")
+        total_cryptonuggets -= points_to_send
+    elif not sender_private_key or not recipient_public_key:
+        st.write("Please enter recipient's public key.")
     else:
-        total_correct_answers = total_correct_answers * 107
+        st.write("Not enough points to send.")
 
-    st.write(f"Total cryptonuggets: {total_correct_answers}")
-
-    st.subheader("Send cryptonuggets to another user")
-    sender_private_key = st.text_input("Sender's Private Key:")
-    recipient_public_key = st.text_input("Recipient's Public Key:")
-    points_to_send = st.number_input("cryptonuggets to Send:", value=0, min_value=0, step=1)
-
-    if st.button("Send"):
-        if sender_private_key and recipient_public_key and points_to_send <= total_correct_answers:
-            response = send_xrp(sender_private_key, points_to_send, recipient_public_key)
-            st.write(response)
-            total_correct_answers -= points_to_send
-        elif not sender_private_key or not recipient_public_key:
-            st.write("Please enter both sender's private key and recipient's public key.")
-        else:
-            st.write("Not enough points to send.")
-
-    return total_correct_answers
+    return total_cryptonuggets
 
 def send_xrp(seed, amount, destination):
     import xrpl
